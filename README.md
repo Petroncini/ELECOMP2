@@ -4,6 +4,11 @@
 
 Repositório para o projeto 2 de eletrônica da disciplina SSC0180 Eletrônica para Computação com Eduardo Simões.
 
+Por:
+- Caio Petroncini
+- Newton Eduardo Pena Villegas
+- Heitor Gomes de Oliveira
+
 ## Objetivo
 O objetivo deste projeto é montar um circuito capaz de controlar dois motores DC utilizando uma ESP32 que recebe comandos via Wi-Fi. Com este circuito, pretendemos criar um protótipo de um carrinho de controle remoto, que poderá ser utilizado em projetos futuros, onde serão integrados sensores e sistemas de controle mais avançados, incluindo inteligência artificial (IA) e algoritmos genéticos.
 
