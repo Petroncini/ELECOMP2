@@ -8,7 +8,7 @@ Repositório para o projeto 2 de eletrônica da disciplina SSC0180 Eletrônica p
 O objetivo deste projeto é montar um circuito capaz de controlar dois motores DC utilizando uma ESP32 que recebe comandos via Wi-Fi. Com este circuito, pretendemos criar um protótipo de um carrinho de controle remoto, que poderá ser utilizado em projetos futuros, onde serão integrados sensores e sistemas de controle mais avançados, incluindo inteligência artificial (IA) e algoritmos genéticos.
 
 ## Componentes Utilizados
-- **ESP32**: Microcontrolador com capacidade de comunicação Wi-Fi e Bluetooth.
+- **ESP32 devkit v1**: Microcontrolador com capacidade de comunicação Wi-Fi e Bluetooth.
 - **Ponte H L298N**: Módulo controlador de motores que permite a inversão da polaridade para controle bidirecional.
 - **Protoboard**: Placa de ensaio para montagem dos circuitos sem a necessidade de solda.
 - **2 Motores DC 12V**: Motores elétricos que serão controlados pelo circuito.
@@ -45,6 +45,10 @@ A ponte H possui um conversor de tensão integrado, que permite obter uma saída
 - **Pinos Digitais 23 e 22 da ESP32**: Conectados aos pinos in1 e in2 da ponte H, controlando o primeiro motor.
 - **Pinos Digitais 21 e 19 da ESP32**: Conectados aos pinos in3 e in4 da ponte H, controlando o segundo motor.
 - **GND da ESP32**: Conectado ao negativo das baterias para garantir um circuito comum de referência.
+
+<img width="1105" alt="image" src="https://github.com/Petroncini/ELECOMP2/assets/59212480/06c06509-ca97-46d8-b9df-a1895cdeb597">
+*o circuito de verdade usa uma esp32 devkit v1 e uma  ponte H L298N
+
 
 É recomendável adicionar resistores de 3.3k a 5k ohms nas saídas dos pinos da ESP32 para proteger o microcontrolador de possíveis danos.
 
