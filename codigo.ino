@@ -30,7 +30,7 @@ void loop() {
     if (inputString.equalsIgnoreCase("frente")) {
       forward();
     } else if (inputString.equalsIgnoreCase("tras")) {
-      bacjward();
+      backward();
     } else if (inputString.equalsIgnoreCase("esquerda")) {
       left();
     } else if (inputString.equalsIgnoreCase("direita")) {
