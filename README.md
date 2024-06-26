@@ -1,43 +1,59 @@
+---
+
 # ELECOMP2
-Repositório para o projeto 2 de eletrônica da disciplina SSC0180 Eletrônica para Computação com Eduardo Simões. 
 
-Objetivo: montar um circuito para controlar dois motores DC por meio de uma ESP32 recebendo comandos por WIFI. Com esse circuito,
-será possível criar um simples carrinho de controle remoto para ser usado para projetos futuros integrando sensores e sistemas de controle
-mais sofisticados como IA e algoritmos genéticos
+Repositório para o projeto 2 de eletrônica da disciplina SSC0180 Eletrônica para Computação com Eduardo Simões.
 
-Componentes:
-- ESP32
-- POnte H l298n
-- Protoboard
-- 2 motores 12v
-- Jumpers
-- 8 baterias AA 1.5v
-- Suporte para 6 baterias (Série)
-- Suporte para 2 baterias (Série)
+## Objetivo
+O objetivo deste projeto é montar um circuito capaz de controlar dois motores DC utilizando uma ESP32 que recebe comandos via Wi-Fi. Com este circuito, pretendemos criar um protótipo de um carrinho de controle remoto, que poderá ser utilizado em projetos futuros, onde serão integrados sensores e sistemas de controle mais avançados, incluindo inteligência artificial (IA) e algoritmos genéticos.
 
+## Componentes Utilizados
+- **ESP32**: Microcontrolador com capacidade de comunicação Wi-Fi e Bluetooth.
+- **Ponte H L298N**: Módulo controlador de motores que permite a inversão da polaridade para controle bidirecional.
+- **Protoboard**: Placa de ensaio para montagem dos circuitos sem a necessidade de solda.
+- **2 Motores DC 12V**: Motores elétricos que serão controlados pelo circuito.
+- **Jumpers**: Cabos para realizar as conexões entre os componentes no protoboard.
+- **8 Baterias AA 1.5V**: Fontes de alimentação para o circuito, conectadas em série.
+- **Suporte para 6 baterias**: Conector para acomodar e conectar as baterias em série.
+- **Suporte para 2 baterias**: Conector adicional para baterias.
 
-Ponte H: a ponte H serve para mudar o fluxo da corrente direta de 12v indo para o motor, mudando assim o sentido de rotação. A ponte H l298n é conectada numa fonte de 12v, no caso as nossas 8 pilhas em séries, e é capaz de controlar 2 motores DC utilizando 4 entradas lógicas. Então para cada motor podemos ter as entradas
+## Descrição da Ponte H
+A ponte H é um circuito que permite controlar a direção do fluxo de corrente que alimenta os motores, possibilitando a reversão do sentido de rotação. No nosso caso, utilizamos a ponte H L298N, que é um módulo popular para controle de motores. Ele suporta a conexão de uma fonte de alimentação de 12V, que no nosso projeto é fornecida pelas 8 pilhas AA conectadas em série. Este módulo é capaz de controlar dois motores DC de forma independente, utilizando 4 entradas lógicas para cada motor. As combinações de sinais para cada motor são as seguintes:
 
-- 0 e 0 -> motor parado
-- 0 e 1 -> giro horário
-- 1 e 0 -> gito anti-horário
-- 1 e 1 -> motor QUEIMADO
+- **00**: Motor parado.
+- **01**: Motor gira no sentido horário.
+- **10**: Motor gira no sentido anti-horário.
+- **11**: Motor pode ser danificado (evitar essa configuração).
 
-Deve ter cuidado para não mandar dois sinais 1 para as entradas lógicas pois o circuito da ponte H consiste em 4 transistors que mudam a direção da corrente, e se você abrir todos eles você acaba com um curto (embora algumas placas tenham proteção contra isso, better safe than sorry) como pode ser visto no diagram abaixo
+É fundamental evitar a configuração onde ambos os sinais são 1, pois isso pode causar um curto-circuito na ponte H, potencialmente danificando o módulo e os motores. Embora alguns módulos tenham proteção contra curtos, é sempre melhor prevenir.
 
-![image](https://github.com/Petroncini/ELECOMP2/assets/59212480/d26752c9-19e2-46cb-b281-6fd30dd55da9)
+![Diagrama da Ponte H](https://github.com/Petroncini/ELECOMP2/assets/59212480/d26752c9-19e2-46cb-b281-6fd30dd55da9)
 
-ESP32: A esp serve como o microcontrolar para fazer o envio dos sinais lógicos para ponte H. No nosso projeto implementamos alguns jeitos diferentes de fazer esse controle, tanto com um roteiro pre programa de movimentos para o motor, controle através da entrada serial no computador, e o controle através de um site que manda comandos através de requisições GET com informações acerca do movimento desejado do motor. Esse último só é possível graças ao chip de Wi-FI da ESP32. 
+## ESP32 como Microcontrolador
+A ESP32 é um microcontrolador versátil, equipado com capacidades de comunicação Wi-Fi e Bluetooth. No nosso projeto, a ESP32 é responsável por enviar os sinais lógicos para a ponte H, controlando assim os motores. Implementamos diferentes métodos de controle:
 
-Circuito: O circuito é composto pelas 8 baterias de 1.5V conectadas em séries para alimentar a ponte H. É conectado então, o positivo de 12v na entrada de energia da ponte H, para fazer alimentação dos motores. Da mesma forma, o negativo das baterias é conectado ao GND da ponte H. A ponte vem com o próprio conversor de tensão, então é possível tirar uma tensão de 5v da ponte H para alimentar a ESP32 quando o circuito estive em operação. A ESP32, durante o desenvolvimento do projeto, foi alimentada usando o próprio micro-USB. Além disso, os pinos digitais 23 e 22 são ligados ao in1 e in2 da ponte H e os pinos digitais 21 e 19 são ligados ao in3 e in4 da ponte. É por meio desse pinos que a esp32 manda os sinais para fazer o controle dos motores. Também é importante conectar o GND da ESP32 ao negativo das pilhas para a corrente poder fluir para a ponte H. É recomendável também adicionar resistores na faixa de 3.3-5k ohms na saida dos pinos da ESP32 para protege-la (RIP ESP32 1 e 2);
+1. **Roteiro pré-programado**: Um conjunto de movimentos predefinidos que o carrinho segue automaticamente.
+2. **Controle via entrada serial**: Utilizando o monitor serial da IDE do Arduino, podemos enviar comandos diretamente para a ESP32, que então controla os motores em tempo real.
+3. **Controle via interface web**: A ESP32 hospeda um servidor web simples que aceita comandos de movimento via requisições HTTP GET. Essa funcionalidade é possibilitada pelo módulo Wi-Fi integrado na ESP32.
 
-![image](https://github.com/Petroncini/ELECOMP2/assets/59212480/62b974d3-ab72-4094-ae01-6bac41b38d00)
+## Descrição do Circuito
+O circuito é alimentado por 8 baterias AA de 1.5V conectadas em série, fornecendo um total de 12V. Esta fonte de alimentação é conectada à entrada de energia da ponte H L298N para alimentar os motores. O negativo das baterias é ligado ao GND da ponte H, completando o circuito de alimentação.
 
-![image](https://github.com/Petroncini/ELECOMP2/assets/59212480/1971b7c9-0e5d-4a2a-86b5-b648ba36d79d)
+A ponte H possui um conversor de tensão integrado, que permite obter uma saída de 5V para alimentar a ESP32 durante a operação. No desenvolvimento do projeto, a ESP32 foi alimentada via micro-USB.
 
+### Conexões Detalhadas
+- **Pinos Digitais 23 e 22 da ESP32**: Conectados aos pinos in1 e in2 da ponte H, controlando o primeiro motor.
+- **Pinos Digitais 21 e 19 da ESP32**: Conectados aos pinos in3 e in4 da ponte H, controlando o segundo motor.
+- **GND da ESP32**: Conectado ao negativo das baterias para garantir um circuito comum de referência.
 
-Código: Nesse repositório temos dois programas que usamos para controlar os motores. O primeiro 
+É recomendável adicionar resistores de 3.3k a 5k ohms nas saídas dos pinos da ESP32 para proteger o microcontrolador de possíveis danos.
 
+![Esquema do Circuito](https://github.com/Petroncini/ELECOMP2/assets/59212480/62b974d3-ab72-4094-ae01-6bac41b38d00)
 
+![Imagem do Circuito](https://github.com/Petroncini/ELECOMP2/assets/59212480/1971b7c9-0e5d-4a2a-86b5-b648ba36d79d)
 
+## Código Fonte
+Neste repositório, disponibilizamos dois programas para controlar os motores. O primeiro programa permite controle via monitor serial da IDE do Arduino. Utilizando comandos como "frente", "tras", "direita" e "esquerda" no terminal, é possível controlar o movimento dos motores. No loop principal do programa, a entrada do usuário é verificada e a função correspondente é chamada. Cada função de movimento utiliza a função `digitalWrite` para enviar sinais às entradas lógicas da ponte H, alterando a direção da corrente que passa pelos motores e, consequentemente, sua rotação.
 
+### Prevenção de Curto-Circuito
+No código, tomamos o cuidado de sempre definir os pinos como LOW antes de defini-los como HIGH. Isso evita a situação onde todos os transistores da ponte H estariam abertos simultaneamente, o que causaria um curto-circuito.
