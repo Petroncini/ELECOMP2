@@ -1,4 +1,4 @@
----
+--------------------------
 
 # ELECOMP2
 
@@ -54,7 +54,6 @@ A ponte H possui um conversor de tensão integrado, que permite obter uma saída
 <img width="1105" alt="image" src="https://github.com/Petroncini/ELECOMP2/assets/59212480/06c06509-ca97-46d8-b9df-a1895cdeb597">
 *o circuito de verdade usa uma esp32 devkit v1 e uma  ponte H L298N
 
-
 É recomendável adicionar resistores de 3.3k a 5k ohms nas saídas dos pinos da ESP32 para proteger o microcontrolador de possíveis danos.
 
 ![Esquema do Circuito](https://github.com/Petroncini/ELECOMP2/assets/59212480/62b974d3-ab72-4094-ae01-6bac41b38d00)
@@ -64,5 +63,45 @@ A ponte H possui um conversor de tensão integrado, que permite obter uma saída
 ## Código Fonte
 Neste repositório, disponibilizamos dois programas para controlar os motores. O primeiro programa permite controle via monitor serial da IDE do Arduino. Utilizando comandos como "frente", "tras", "direita" e "esquerda" no terminal, é possível controlar o movimento dos motores. No loop principal do programa, a entrada do usuário é verificada e a função correspondente é chamada. Cada função de movimento utiliza a função `digitalWrite` para enviar sinais às entradas lógicas da ponte H, alterando a direção da corrente que passa pelos motores e, consequentemente, sua rotação.
 
-### Prevenção de Curto-Circuito
-No código, tomamos o cuidado de sempre definir os pinos como LOW antes de defini-los como HIGH. Isso evita a situação onde todos os transistores da ponte H estariam abertos simultaneamente, o que causaria um curto-circuito.
+### Considerações de segurança no código
+No código, tomamos o cuidado de sempre definir os pinos como LOW antes de defini-los como HIGH. Isso evita a situação onde todos os transistores da ponte H estariam abertos simultaneamente, o que causaria um curto-circuito. Além disso, é importante manter em mente que quando um motor DC muda de direção, uma corrente oposta é induzida no fio, que esquenta os componentes e, mais importante, causa curto em qualquer coisa não protegida contra essa reversão de corrente. Por isso, e isso foi algo que aprendemos depois de ter estragado duas ESPs, é importante, antes de qualquer alteração na direção, ou seja, antes de mudar os sinais lógicos indo da ESP32 para a ponte H, que você sete todos os sinais lógicos para 0, parando os motores, e espere um tempo de 500 a 1000 milissegundos de margem de segurança. 
+
+Então, resumindo as medidas de segurança para a montagem do circuito e no seu código:
+- Coloque resistores na saída da ESP32 para evitar que a ponte H puxe corrente demais dela.
+- NUNCA mande dois sinais de HIGH para os inputs de um mesmo motor; para evitar isso, rode os digitalWrites LOW antes dos HIGH.
+- Desligue os motores por no mínimo 500 milissegundos antes de qualquer mudança de direção de rotação nos motores. Delicadeza é essencial.
+
+### Programa com Interface Wi-Fi
+Adicionamos um novo programa que permite controlar o carrinho via uma interface web, utilizando a capacidade Wi-Fi da ESP32. Este programa cria um servidor web simples que aceita comandos de movimento (frente, trás, esquerda, direita e parar) enviados através de requisições HTTP GET. Isso permite controlar o carrinho de qualquer dispositivo conectado à mesma rede Wi-Fi, como um smartphone ou laptop.
+
+#### Explicação Detalhada do Programa
+
+1. **Configuração da Rede Wi-Fi**:
+   - No início do código, você define o SSID (nome) e a senha da rede Wi-Fi à qual a ESP32 irá se conectar.
+   - No `setup()`, a ESP32 tenta se conectar à rede Wi-Fi utilizando essas credenciais, imprimindo mensagens no monitor serial para indicar o status da conexão.
+
+2. **Configuração dos Pinos**:
+   - Os pinos da ESP32 são configurados como saídas, especificando quais pinos controlam os motores. Além dos pinos dos motores, também é configurado um pino para um LED indicador.
+
+3. **Inicialização do Servidor Web**:
+   - Após estabelecer a conexão Wi-Fi, o servidor web é iniciado na porta 80. O endereço IP da ESP32 na rede é então impresso no monitor serial.
+
+4. **Loop Principal**:
+   - No `loop()`, o código verifica se há um cliente conectado ao servidor (um dispositivo que fez uma requisição HTTP).
+   - Se uma requisição for recebida, ela é lida e analisada para determinar qual comando foi enviado (por exemplo, /FORWARD, /BACKWARD, /LEFT, /RIGHT, /STOP).
+   - Com base no comando recebido, a ESP32 ajusta os pinos dos motores para executar a ação correspondente (mover para frente, para trás, virar à esquerda, virar à direita, ou parar).
+   - Após processar o comando, o servidor web envia uma resposta de confirmação ao cliente.
+
+5. **Funções de Movimento**:
+   - Existem funções específicas para cada movimento (frente, trás, esquerda, direita, parar). Essas funções ajustam os pinos dos motores para criar o movimento desejado.
+   - Antes de cada mudança de movimento, os pinos são todos definidos como LOW para evitar curto-circuitos e danos à ponte H e à ESP32.
+
+### Instruções de Uso
+1. Carregue o programa na ESP32 utilizando a IDE do Arduino.
+2. Abra o monitor serial para verificar as mensagens de status.
+3. Conecte-se à rede Wi-Fi configurada no código.
+4. Utilize um navegador web em um dispositivo conectado à mesma rede e acesse o endereço IP da ESP32.
+5. Envie comandos de movimento através da barra de endereços do navegador (por exemplo, `http://<IP_DA_ESP32>/FORWARD` para mover para frente).
+
+----------------------
+
