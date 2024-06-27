@@ -3,8 +3,8 @@
 
 #define LED_BUILTIN 2
 
-const char* ssid = "Caio's iPhone";  // Substitua com seu SSID
-const char* password = "caiop314";  // Substitua com sua senha
+const char* ssid = "YourSSID";  // Substitua com seu SSID
+const char* password = "YourPassword";  // Substitua com sua senha
 const int motor1Pin1 = 23;
 const int motor1Pin2 = 22;
 const int motor2Pin1 = 21;
