@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Controle do Carrinho</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn-control {
+            width: 100px;
+            height: 100px;
+            font-size: 20px;
+            margin: 10px;
+        }
+        .active {
+            background-color: #343a40 !important;
+            border-color: #343a40 !important;
+        }
+    </style>
+    <script>
+        function sendCommand(command, buttonId) {
+            const espIp = 'http://YOUR_ESP32_IP'; // Substitua pelo endereço IP da sua ESP32
+            fetch(`${espIp}/${command}`)
+                .then(response => response.text())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error:', error));
+
+            const button = document.getElementById(buttonId);
+            button.classList.add('active');
+            setTimeout(() => {
+                button.classList.remove('active');
+            }, 100);
+        }
+
+        document.addEventListener('keydown', function(event) {
+            var key = event.key;
+            if (key === 'w') { sendCommand('FORWARD', 'btn-forward'); }
+            else if (key === 'a') { sendCommand('LEFT', 'btn-left'); }
+            else if (key === 's') { sendCommand('BACKWARD', 'btn-backward'); }
+            else if (key === 'd') { sendCommand('RIGHT', 'btn-right'); }
+            else if (key === ' ') { sendCommand('STOP', 'btn-stop'); }
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Controle do Carrinho</h1>
+        <div class="buttons">
+            <button id="btn-forward" class="btn btn-primary btn-control" onclick="sendCommand('FORWARD', 'btn-forward')">Forward</button>
+        </div>
+        <div class="buttons">
+            <button id="btn-left" class="btn btn-primary btn-control" onclick="sendCommand('LEFT', 'btn-left')">Left</button>
+            <button id="btn-stop" class="btn btn-primary btn-control" onclick="sendCommand('STOP', 'btn-stop')">Stop</button>
+            <button id="btn-right" class="btn btn-primary btn-control" onclick="sendCommand('RIGHT', 'btn-right')">Right</button>
+        </div>
+        <div class="buttons">
+            <button id="btn-backward" class="btn btn-primary btn-control" onclick="sendCommand('BACKWARD', 'btn-backward')">Backward</button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
